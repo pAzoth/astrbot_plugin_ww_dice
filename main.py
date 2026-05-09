@@ -22,6 +22,7 @@ class WWDicePlugin(Star):
         self.wakeup_prefix = [".", "。"]
         self.data_dir = StarTools.get_data_dir()
         self.config_path = os.path.join(str(self.data_dir), "ww_defaults.json")
+        self.switch_path = os.path.join(str(self.data_dir), "ww_switch.json")
 
     # ── 配置读写 ──
 
@@ -37,6 +38,25 @@ class WWDicePlugin(Star):
     def _save_defaults(self, data: dict):
         with open(self.config_path, "w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
+
+    # ── 群开关 ──
+
+    def _load_switch(self) -> dict:
+        if os.path.exists(self.switch_path):
+            try:
+                with open(self.switch_path, "r", encoding="utf-8") as f:
+                    return json.load(f)
+            except Exception:
+                pass
+        return {}
+
+    def _save_switch(self, data: dict):
+        with open(self.switch_path, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+
+    def _is_disabled(self, group_id: str) -> bool:
+        switch = self._load_switch()
+        return switch.get(str(group_id), False)
 
     # ── 核心骰点 ──
 
@@ -75,6 +95,24 @@ class WWDicePlugin(Star):
         if not m:
             return
         expr = body[len(m.group(1)):].strip()
+        group_id = str(event.get_group_id())
+
+        # ── on / off 开关 ──
+        if expr.lower() in ("on", "off"):
+            switch = self._load_switch()
+            if expr.lower() == "off":
+                switch[group_id] = True
+                self._save_switch(switch)
+                yield event.plain_result("WW骰点已关闭。")
+            else:
+                switch.pop(group_id, None)
+                self._save_switch(switch)
+                yield event.plain_result("WW骰点已开启。")
+            return
+
+        # ── 检查该群是否禁用 ──
+        if self._is_disabled(group_id):
+            return
 
         defaults = self._load_defaults()
 
