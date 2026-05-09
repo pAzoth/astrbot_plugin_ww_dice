@@ -1,0 +1,5 @@
+name: astrbot_plugin_ww_dice
+display_name: WW无限规则骰点
+desc: World of Darkness / 无限恐怖风格骰池系统。支持 .ww 10a5k6m7 格式，加骰线/成功线/面数自由设定，支持 set 修改默认值。
+version: v1.0.0
+author: pAzoth

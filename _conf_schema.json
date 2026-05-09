@@ -1,0 +1,37 @@
+{
+  "dice": {
+    "description": "WW骰点配置",
+    "type": "object",
+    "hint": "配置WW无限规则骰点的默认参数和限制",
+    "items": {
+      "default_a": {
+        "description": "默认加骰线",
+        "type": "int",
+        "hint": ">=此值触发额外骰子",
+        "default": 10,
+        "slider": { "min": 2, "max": 100, "step": 1 }
+      },
+      "default_k": {
+        "description": "默认成功线",
+        "type": "int",
+        "hint": ">=此值计为成功",
+        "default": 8,
+        "slider": { "min": 2, "max": 100, "step": 1 }
+      },
+      "default_m": {
+        "description": "默认面数",
+        "type": "int",
+        "hint": "骰子面数",
+        "default": 10,
+        "slider": { "min": 2, "max": 1000, "step": 1 }
+      },
+      "max_dice": {
+        "description": "最大骰子数",
+        "type": "int",
+        "hint": "单次掷骰最多骰子个数",
+        "default": 100,
+        "slider": { "min": 1, "max": 1000, "step": 10 }
+      }
+    }
+  }
+}
